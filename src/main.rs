@@ -18,8 +18,13 @@ const WIN_SIZE: (u32, u32) = (640, 480);
 const PIX_SIZE: (u32, u32) = (320, 240);
 
 fn main() -> Result<(), EventLoopError> {
-    // We'll trigger an update and redraw this often
-    let timer_length = Duration::from_millis(15);
+    // We'll trigger an update and redraw this often. There's no real correct value here,
+    // it's just how often we want to update the game state (or whatever it is) but there
+    // is a wrong value: it turns out that specifying 15 milliseconds (about 60 hz) will
+    // drastically lengthen the time to draw a frame, due to vsync: rendering the Pixels
+    // will block until the next vsync, and our drawing will take nonzero time, so we'll
+    // end up always arriving late and waiting for the next redraw.
+    let timer_length = Duration::from_millis(20);
 
     // winit now makes is track the mouse position ourselves...
     let mut mouse_pos: (f64, f64) = (-1f64, -1f64);
